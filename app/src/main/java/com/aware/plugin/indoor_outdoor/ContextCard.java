@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 
 import android.app.ProgressDialog;
@@ -40,6 +40,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+//TODO: show daily plot of indoor/outdoor time stacked bar plot
 
 public class ContextCard implements IContextCard {
     private XYSeries magno = new XYSeries("Magnotometer");

@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,5 +1,5 @@
 <manifest
-    package="com.aware.plugin.vahida"
+    package="com.aware.plugin.indoor_outdoor"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -12,20 +12,20 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
-        <service android:exported="true" android:name="com.aware.plugin.vahida.Plugin"/>
-        <service android:name="ActivityRecognitionService"></service>
+        <service android:exported="true" android:name="com.aware.plugin.indoor_outdoor.Plugin"/>
+        <!--<service android:name="com.aware.plugin.indoor_outdoor.ActivityRecognitionService"></service>-->
         <activity
-            android:name="com.aware.plugin.vahida.Settings"
+            android:name="com.aware.plugin.indoor_outdoor.Settings"
             android:exported="true"/>
+        <!--<provider-->
+            <!--android:name="com.aware.plugin.indoor_outdoor.ActivityProvider"-->
+            <!--android:authorities="com.aware.plugin.indoor_outdoor.provider"-->
+            <!--android:exported="true"-->
+            <!--android:readPermission="com.aware.READ_CONTEXT_DATA"-->
+            <!--android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>-->
         <provider
-            android:name="com.aware.plugin.vahida.ActivityProvider"
-            android:authorities="com.aware.plugin.vahida.provider"
-            android:exported="true"
-            android:readPermission="com.aware.READ_CONTEXT_DATA"
-            android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>
-        <provider
-            android:name="com.aware.plugin.vahida.LocationProvider"
-            android:authorities="com.aware.plugin.vahida.location.provider"
+            android:name="com.aware.plugin.indoor_outdoor.LocationProvider"
+            android:authorities="com.aware.plugin.indoor_outdoor.provider.location"
             android:exported="true"
             android:readPermission="com.aware.READ_CONTEXT_DATA"
             android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>

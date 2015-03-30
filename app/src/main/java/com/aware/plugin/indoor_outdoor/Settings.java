@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,11 +36,30 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
         //Make sure to load the latest values
         CheckBoxPreference status = (CheckBoxPreference) findPreference(STATUS_PLUGIN_TEMPLATE);
         status.setChecked(Aware.getSetting(this, STATUS_PLUGIN_TEMPLATE).equals("true"));
+
+        //TODO: take a look at Ambient Noise and add
+        // - Sampling frequency
+        // - Sampling size
+        // - Threshold light
+        // - Threshold proximity
+        // - Threshold magnetometer
+        // - Threshold network signal
+
         EditTextPreference edit_light_threshold = (EditTextPreference) findPreference(STATUS_PLUGIN_LIGHT);
+        //TODO: check if value exists in AWARE's settings, set default if not, load previous value
+//        edit_light_threshold.setText(Aware.getSetting(this, Settings.STATUS_PLUGIN_LIGHT));
+//        edit_light_threshold.setSummary("Current value: ");
+
         EditTextPreference edit_magno_threshold = (EditTextPreference) findPreference(STATUS_PLUGIN_MAGNETOMETER);
         EditTextPreference edit_signal_threshold = (EditTextPreference) findPreference(STATUS_PLUGIN_SIGNAL);
 
         //...
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        syncSettings();
     }
 
     @Override

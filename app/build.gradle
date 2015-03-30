@@ -9,7 +9,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.aware.plugin.vahida"
+        applicationId "com.aware.plugin.indoor_outdoor"
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 3
@@ -30,5 +30,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.android.support:cardview-v7:21.0.3'
 
-    compile 'com.awareframework:aware-core:+@aar'
+    compile 'com.awareframework:aware-core:3.3.3@aar'
 }

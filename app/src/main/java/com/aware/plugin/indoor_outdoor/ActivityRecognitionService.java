@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 /**
  * Created by Mitra on 3/10/2015.
@@ -7,7 +7,6 @@ package com.aware.plugin.vahida;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.util.Log;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;

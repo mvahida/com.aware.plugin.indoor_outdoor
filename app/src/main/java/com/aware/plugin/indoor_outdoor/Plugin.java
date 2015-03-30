@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -15,7 +15,6 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aware.Applications;
@@ -23,6 +22,7 @@ import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.Light;
 import com.aware.Magnetometer;
+import com.aware.Proximity;
 import com.aware.providers.Light_Provider;
 import com.aware.providers.Magnetometer_Provider;
 import com.aware.utils.Aware_Plugin;
@@ -34,10 +34,10 @@ import com.google.android.gms.location.LocationRequest;
 
 import java.util.Calendar;
 
-
-public class Plugin extends Aware_Plugin implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+//implements
+//        GoogleApiClient.ConnectionCallbacks,
+//        GoogleApiClient.OnConnectionFailedListener
+public class Plugin extends Aware_Plugin {
     private final String TAG = "MyAwesomeApp";
     private GoogleApiClient mGoogleApiClient;
     private PendingIntent pIntent;
@@ -50,8 +50,8 @@ public class Plugin extends Aware_Plugin implements
     private static double magneto_power = 0;
     private static double light_power = 0;
     private static double signal_strength = 0;
-    private static String ACTION_AWARE_LOCATION_TYPE = "ACTION_AWARE_LOCATION_TYPE";
-    private static String EXTRA_LOCATION = "Indoor";
+    private static String ACTION_AWARE_PLUGIN_INDOOR_OUTDOOR = "ACTION_AWARE_PLUGIN_INDOOR_OUTDOOR";
+    private static String EXTRA_LOCATION = "indoor_outdoor";
     private static String location = "";
     private TelephonyManager telephonyManager;
     private MyPhoneStateListener signalListener;
@@ -63,58 +63,70 @@ public class Plugin extends Aware_Plugin implements
         super.onCreate();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //TODO: Make these adaptable over time
         magno_threshold = Integer.valueOf(prefs.getString("edit_magno_threshold", "50"));
         light_threshold = Integer.valueOf(prefs.getString("edit_light_threshold", "400"));
         signal_threshold = Integer.valueOf(prefs.getString("edit_signal_threshold", "25"));
-        //------------------------Activate sensors
-        Aware.setSetting(this, Aware_Preferences.STATUS_LIGHT, true);
-        Aware.setSetting(this, Aware_Preferences.FREQUENCY_LIGHT, 20000);
 
-        Aware.setSetting(this, Aware_Preferences.STATUS_MAGNETOMETER, true);
-        Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER, SensorManager.SENSOR_DELAY_NORMAL);
+        //------------------------Activate sensors
+        //TODO: Make sensing work in intervals (see Ambient Noise example)
+        //TODO: Add proximity sensor to the reasoning
+//        Aware.setSetting(this, Aware_Preferences.STATUS_LIGHT, true);
+//        Aware.setSetting(this, Aware_Preferences.FREQUENCY_LIGHT, 20000);
+//
+//        Aware.setSetting(this, Aware_Preferences.STATUS_MAGNETOMETER, true);
+//        Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER, SensorManager.SENSOR_DELAY_NORMAL);
+
+        Aware.startPlugin(this, "com.aware.plugin.google.activity_recognition");
 
         signalListener = new MyPhoneStateListener();
         telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(signalListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
-        Aware.setSetting(this, Aware_Preferences.STATUS_APPLICATIONS, true);
+//        Aware.setSetting(this, Aware_Preferences.STATUS_APPLICATIONS, true);
         //------------------------Apply settings
-        sendBroadcast(new Intent(Aware.ACTION_AWARE_REFRESH));
+
+
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Light.ACTION_AWARE_LIGHT);
         filter.addAction(Magnetometer.ACTION_AWARE_MAGNETOMETER);
-        filter.addAction(Applications.ACTION_AWARE_APPLICATIONS_FOREGROUND);
+        filter.addAction(Proximity.ACTION_AWARE_PROXIMITY);
+
+//        filter.addAction(Applications.ACTION_AWARE_APPLICATIONS_FOREGROUND);
 
         registerReceiver(dataReceiver, filter);
         //------------------------
         DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
 
-        if (DEBUG) Log.d(TAG, "Template plugin running");
+//        if (DEBUG) Log.d(TAG, "Template plugin running");
 
-        int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resp == ConnectionResult.SUCCESS) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(ActivityRecognition.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-            mGoogleApiClient.connect();
-            Intent intent = new Intent(this, ActivityRecognitionService.class);
-            pIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        } else {
-            Toast.makeText(this, "Please install Google Play Service.", Toast.LENGTH_SHORT).show();
-        }
+//        int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+//        if (resp == ConnectionResult.SUCCESS) {
+//            mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                    .addApi(ActivityRecognition.API)
+//                    .addConnectionCallbacks(this)
+//                    .addOnConnectionFailedListener(this)
+//                    .build();
+//            mGoogleApiClient.connect();
+//            Intent intent = new Intent(this, ActivityRecognitionService.class);
+//            pIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        } else {
+//            Toast.makeText(this, "Please install Google Play Service.", Toast.LENGTH_SHORT).show();
+//        }
 
         CONTEXT_PRODUCER = new ContextProducer() {
             @Override
             public void onContext() {
-                Intent context = new Intent(ACTION_AWARE_LOCATION_TYPE);
+                Intent context = new Intent(ACTION_AWARE_PLUGIN_INDOOR_OUTDOOR);
                 context.putExtra(EXTRA_LOCATION, location);
                 sendBroadcast(context);
             }
         };
+
+        sendBroadcast(new Intent(Aware.ACTION_AWARE_REFRESH));
     }
 
     @Override
@@ -132,26 +144,38 @@ public class Plugin extends Aware_Plugin implements
         if (DEBUG) Log.d(TAG, "Template plugin terminated");
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "GoogleApiClient connection has been suspend");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "GoogleApiClient connection has failed");
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Aware.startPlugin(this, getPackageName());
-    }
+//    @Override
+//    public void onConnectionSuspended(int i) {
+//        Log.d(TAG, "GoogleApiClient connection has been suspend");
+//    }
+//
+//    @Override
+//    public void onConnectionFailed(ConnectionResult connectionResult) {
+//        Log.d(TAG, "GoogleApiClient connection has failed");
+//    }
+//
+//    @Override
+//    public void onConnected(Bundle bundle) {
+//        Aware.startPlugin(this, getPackageName());
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (mGoogleApiClient.isConnected()) {
-            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mGoogleApiClient, 0, pIntent);
+//        if (mGoogleApiClient.isConnected()) {
+//            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mGoogleApiClient, 0, pIntent);
+//        }
+
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(System.currentTimeMillis());
+        if (date.get(Calendar.HOUR_OF_DAY) > 18 || date.get(Calendar.HOUR_OF_DAY) < 6) {
+            dark_time = true;
+        } else {
+            dark_time = false;
         }
+
+
+        //TODO: check if the settings have changed (see Ambient Noise)
+
         return START_STICKY;
     }
 
@@ -160,13 +184,6 @@ public class Plugin extends Aware_Plugin implements
     public static class SensorDataReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Calendar date = Calendar.getInstance();
-            date.setTimeInMillis(System.currentTimeMillis());
-            if (date.get(Calendar.HOUR_OF_DAY) > 18 || date.get(Calendar.HOUR_OF_DAY) < 6) {
-                dark_time = true;
-            } else {
-                dark_time = false;
-            }
 
             if (intent.getAction().equals(Magnetometer.ACTION_AWARE_MAGNETOMETER)) {
                 Cursor magnetometer = context.getContentResolver().query
@@ -187,22 +204,14 @@ public class Plugin extends Aware_Plugin implements
                 if (light != null && !light.isClosed()) light.close();
             }
 
-            probability_compute();
-            ContentValues data = new ContentValues();
-            data.put(LocationProvider.Location_Data.TIMESTAMP, System.currentTimeMillis());
-            data.put(LocationProvider.Location_Data.DEVICE_ID, Aware.getSetting(context, Aware_Preferences.DEVICE_ID));
-            data.put(LocationProvider.Location_Data.LOCATION, location);
-            data.put(LocationProvider.Location_Data.INSIDE_PROBABILITY, inside_percentage);
-            data.put(LocationProvider.Location_Data.OUTSIDE_PROBABILITY, outside_percentage);
-            data.put(LocationProvider.Location_Data.LABEL, location);
-            data.put(LocationProvider.Location_Data.MAGNETOMETER, magneto_power);
-            data.put(LocationProvider.Location_Data.LIGHT, light_power);
-            data.put(LocationProvider.Location_Data.SIGNAL, signal_strength);
-            context.getContentResolver().insert(LocationProvider.Location_Data.CONTENT_URI, data);
+            //TODO: add Proximity
+
+            probability_compute(context);
+
         }
     }
 
-    static private void probability_compute() {
+    static private void probability_compute(Context context) {
         double sum_inside = 0, sum_outside = 0, sum = 0;
         double[] sum_diff = new double[3];
         // when it's night the algorithm for light should be different because in day if the light is a lot we
@@ -229,6 +238,18 @@ public class Plugin extends Aware_Plugin implements
 
         outside_percentage = Math.round(((sum_outside / sum) * 100) * 100.00) / 100.00;
         inside_percentage = Math.round(((sum_inside / sum) * 100) * 100.00) / 100.00;
+
+        ContentValues data = new ContentValues();
+        data.put(LocationProvider.Location_Data.TIMESTAMP, System.currentTimeMillis());
+        data.put(LocationProvider.Location_Data.DEVICE_ID, Aware.getSetting(context, Aware_Preferences.DEVICE_ID));
+        data.put(LocationProvider.Location_Data.LOCATION, location);
+        data.put(LocationProvider.Location_Data.INSIDE_PROBABILITY, inside_percentage);
+        data.put(LocationProvider.Location_Data.OUTSIDE_PROBABILITY, outside_percentage);
+        data.put(LocationProvider.Location_Data.LABEL, location);
+        data.put(LocationProvider.Location_Data.MAGNETOMETER, magneto_power);
+        data.put(LocationProvider.Location_Data.LIGHT, light_power);
+        data.put(LocationProvider.Location_Data.SIGNAL, signal_strength);
+        context.getContentResolver().insert(LocationProvider.Location_Data.CONTENT_URI, data);
     }
 
     private class MyPhoneStateListener extends PhoneStateListener {
@@ -239,9 +260,6 @@ public class Plugin extends Aware_Plugin implements
             signal_strength = signalStrength.getGsmSignalStrength();
         }
     }
-
-    ;
-
 }
 
 

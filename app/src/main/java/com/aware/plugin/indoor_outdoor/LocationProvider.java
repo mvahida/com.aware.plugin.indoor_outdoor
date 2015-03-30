@@ -1,4 +1,4 @@
-package com.aware.plugin.vahida;
+package com.aware.plugin.indoor_outdoor;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -26,11 +26,11 @@ public class LocationProvider extends ContentProvider {
     /**
      * Authority of this content provider
      */
-    public static String AUTHORITY = "com.aware.plugin.vahida.location.provider";
+    public static String AUTHORITY = "com.aware.plugin.indoor_outdoor.provider.location";
     /**
      * ContentProvider database version. Increment every time you modify the database structure
      */
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     public static final class Location_Data implements BaseColumns {
         private Location_Data() {
@@ -41,17 +41,17 @@ public class LocationProvider extends ContentProvider {
          * Your ContentProvider table content URI.<br/>
          * The last segment needs to match your database table name
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/Location");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_indoor_outdoor_location");
         /**
          * How your data collection is identified internally in Android (vnd.android.cursor.dir). <br/>
          * It needs to be /vnd.aware.plugin.XXX where XXX is your plugin name (no spaces!).
          */
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.vahida";
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.indoor_outdoor";
         /**
          * How each row is identified individually internally in Android (vnd.android.cursor.item). <br/>
          * It needs to be /vnd.aware.plugin.XXX where XXX is your plugin name (no spaces!).
          */
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.vahida";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.indoor_outdoor";
         public static final String _ID = "_id";
         public static final String TIMESTAMP = "timestamp";
         public static final String DEVICE_ID = "device_id";
@@ -70,12 +70,12 @@ public class LocationProvider extends ContentProvider {
     /**
      * Database stored in external folder: /AWARE/plugin_template.db
      */
-    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/AWARE/Location.db";
+    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/AWARE/plugin_indoor_outdoor_location.db";
     /**
      * Database tables:<br/>
      * - plugin_phone_usage
      */
-    public static final String[] DATABASE_TABLES = {"Location"};
+    public static final String[] DATABASE_TABLES = {"plugin_indoor_outdoor_location"};
     /**
      * Database table fields
      */
