@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="status_plugin_template"
+        android:persistent="true"
+        android:summary="Activate/Deactivate template plugin"/>
+    <EditTextPreference
+        android:defaultValue="40"
+        android:inputType="number"
+        android:numeric="integer"
+        android:key="edit_magno_threshold"
+        android:persistent="true"
+        android:summary="Magnetometer threshold"/>
+    <EditTextPreference
+        android:defaultValue="400"
+        android:inputType="number"
+        android:numeric="integer"
+        android:key="edit_light_threshold"
+        android:persistent="true"
+        android:summary="Light threshold"/>
+    <EditTextPreference
+        android:defaultValue="25"
+        android:inputType="number"
+        android:numeric="integer"
+        android:key="edit_signal_threshold"
+        android:persistent="true"
+        android:summary="Signal strength threshold"/>
+</PreferenceScreen>

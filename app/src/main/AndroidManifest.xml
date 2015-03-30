@@ -1,0 +1,33 @@
+<manifest
+    package="com.aware.plugin.vahida"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name">
+        <service android:exported="true" android:name="com.aware.plugin.vahida.Plugin"/>
+        <service android:name="ActivityRecognitionService"></service>
+        <activity
+            android:name="com.aware.plugin.vahida.Settings"
+            android:exported="true"/>
+        <provider
+            android:name="com.aware.plugin.vahida.ActivityProvider"
+            android:authorities="com.aware.plugin.vahida.provider"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>
+        <provider
+            android:name="com.aware.plugin.vahida.LocationProvider"
+            android:authorities="com.aware.plugin.vahida.location.provider"
+            android:exported="true"
+            android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>
+    </application>
+</manifest>
